@@ -42,11 +42,29 @@ app.get('/response', async function (req,res){
     res.send(myres);
 })
 
+app.get('/savedresponse', async function (req,res){
+    let userid = req.query.userid;
+    console.log("Get Worked")
+    const myres = await postgres.select('*').from('savedresponse').where('userid',userid);
+    res.send(myres);
+})
+
 app.get('/note', async function (req,res){
     console.log("Get Worked")
     const myres = await postgres.select('*').from('notes');
     res.send(myres);
 })
+
+app.post('/savedresponse',cors(), function(req,res){
+    console.log(req.body);
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
+    const myres =  postgres('savedresponse').insert(req.body).then((data) => console.log("data from knex",req,res))
+        .catch((err) => { res.send({"error":err.detail}); throw err.detail;})
+        .finally(() => res.send({"error":"Awesome! Your response is saved"}));
+    console.log("Response post worked")
+});
 
 //Get method on /users
 app.get('/canned', async function (req,res){
@@ -68,6 +86,17 @@ app.post('/response',cors(), function(req,res){
 });
 
 app.post('/users',cors(), function(req,res){
+    console.log(req.body);
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
+    const myres =  postgres('respuser').insert(req.body).then((data) => console.log("data from knex",req,res))
+        .catch((err) => { res.send({"error":err.detail}); throw err.detail;})
+        .finally(() => res.send({"error":"User added successfully"}));
+    console.log("Response post worked")
+});
+
+app.delete('/users',cors(), function(req,res){
     console.log(req.body);
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
